@@ -1,0 +1,23 @@
+//<BUTTONS (a.btn+tab)>
+// Сніппет (HTML): btn
+
+.button {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	padding: toRem(0) toRem(15);
+	text-align: center;
+	transition: all 0.3s ease 0s;
+	min-height: toRem(48);
+	// .button--white
+	&--white {
+		color: var(--orange-color);
+		background-color: #fff;
+		@media (any-hover: hover) {
+			&:hover {
+				background-color: var(--orange-color);
+				color: #fff;
+			}
+		}
+	}
+}

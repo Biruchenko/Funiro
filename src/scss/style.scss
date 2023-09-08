@@ -1,0 +1,1007 @@
+@use "sass:math";
+
+// Підключення міксинів ===========================================================================================================================================================================================================================================================================
+@import "base/mixins";
+
+// Підключення шрифтів ===========================================================================================================================================================================================================================================================================
+//&display=swap - додати при підключенні через плагін
+
+// Підключити, якщо є локальні файли шрифтів
+@import "fonts/fonts";
+
+// Підключення іконкових шрифтів ==============================================================================================================================================================================================================================================================================
+// Підключити, якщо є файл іконкового шрифту
+@import "fonts/icons";
+
+// ============================================================================================================================================================================================================================================================================================================================================================================================
+// Налаштування шаблону ============================================================================================================================================================================================================================================================================================================================================================================================
+// ============================================================================================================================================================================================================================================================================================================================================================================================
+
+// За замовчуванням шрифт ==============================================================================================================================================================================================================================================================================
+$fontFamily: "Gilroy";
+$fontSize: toRem(16); // де 14(px) - розмір шрифту за замовчуванням з макету
+
+// Основні кольори
+$mainColor: var(--primary); // Колір шрифту за замовчуванням
+
+// Палітра кольорів
+@import "base/colors-palette";
+
+// Налаштування адаптивної сітки ===============================================================================================================================================================================================================================================================================================
+
+// Мінімальна ширина сторінки
+$minWidth: 320;
+// Ширина полотна (макету)
+$maxWidth: 1440;
+// Ширина обмежуючого контейнера (0 = немає обмеження)
+$maxWidthContainer: 1240;
+// Загальний відступ у контейнера
+// (30 = по 15px ліворуч і праворуч, 0 = немає відступу)
+$containerPadding: 30;
+
+// Ширина спрацьовування першого брейкпоінту
+$containerWidth: $maxWidthContainer + $containerPadding;
+
+// Брейк-поїнти
+$pc: em($containerWidth); // ПК, ноутбуки, деякі планшети у горизонтальному положенні
+$tablet: em(991.98); // Планшети, деякі телефони в горизонтальному положенні
+$mobile: em(767.98); // Телефони L
+$mobileSmall: em(479.98); // Телефони S
+
+// Тип адаптива:
+// 1 = чуйність (у контейнера немає брейкпоінтів),
+// 2 = по брейк-поїнт (контейнер змінює свою ширину по брейк-поїнт)
+$responsiveType: 1;
+
+// ============================================================================================================================================================================================================================================================================================================================================================================================
+// ============================================================================================================================================================================================================================================================================================================================================================================================
+
+// Обнулення ============================================================================================================================================================================================== =============================================================================================== ===============================================================================================
+@import "base/null";
+
+// Стилі тега BODY ============================================================================================================================================================================================================================================================================================================================================================================================
+body {
+	// Скролл заблоковано
+	.lock & {
+		overflow: hidden;
+		touch-action: none;
+		overscroll-behavior: none;
+	}
+	// Сайт завантажений
+	.loaded & {
+	}
+}
+// Оболонка wrapper ============================================================================================================================================================================================================================================================================================================================================================================================================================================
+.wrapper {
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	@supports (overflow: clip) {
+		overflow: clip;
+	}
+	// Притискаємо footer
+	> main {
+		flex: 1 1 auto;
+	}
+	// Фікс для слайдерів
+	> * {
+		min-width: 0;
+	}
+}
+// Обмежуючий контейнер ======================================================================================================================================================================================================================
+/*
+(i) Стилі будуть застосовуватись до
+всіх класів, що містять *__container
+Наприклад header__container, main__container і т.п.
+Сніппет (HTML): cnt
+*/
+@if ($responsiveType==1) {
+	// Чуйна
+	[class*="__container"] {
+		@if ($maxWidthContainer>0) {
+			max-width: toRem($containerWidth);
+			margin: 0 auto;
+		}
+		@if ($containerPadding>0) {
+			@if ($maxWidthContainer>0) {
+				padding: 0 toRem(math.div($containerPadding, 2));
+			} @else {
+				@include adaptiveValue("padding-left", math.div($containerPadding, 2), 15);
+				@include adaptiveValue("padding-right", math.div($containerPadding, 2), 15);
+			}
+		}
+	}
+} @else {
+	// Брейк-поїнтами
+	[class*="__container"] {
+		margin: 0 auto;
+		@if ($maxWidthContainer>0) {
+			max-width: toRem($containerWidth);
+		} @else {
+			@if ($containerPadding>0) {
+				padding: 0 toRem(math.div($containerPadding, 2));
+			}
+		}
+		@media (max-width: $pc) {
+			max-width: toRem(970);
+		}
+		@media (max-width: $tablet) {
+			max-width: toRem(750);
+		}
+		@media (max-width: $mobile) {
+			max-width: none;
+			@if ($containerPadding>0 and $maxWidthContainer>0) {
+				padding: 0 toRem(math.div($containerPadding, 2));
+			}
+		}
+	}
+}
+
+// Підключення базових стилів, шаблонів (заготівель) та допоміжних класів
+// Для підключення/вимкнення конкретних стилів дивись base.scss
+@import "base";
+
+// Підключення стилів загальних елементів проекту
+@import "common";
+
+// Підключення стилів окремих блоків
+@import "header";
+@import "footer";
+
+// Підключення стилів окремих сторінок
+@import "home";
+//======================================================================================
+//======================================================================================
+// Main-slider
+.main-slider {
+	background-color: #fcf8f3;
+	// .main-slider__container
+	&__container {
+		position: relative;
+		@media (min-width: $tablet) {
+			&::before {
+				content: "";
+				background-color: #f9f1e7;
+				position: absolute;
+				top: 0;
+				width: 100vw;
+				right: toRem(376);
+				height: 100%;
+			}
+		}
+	}
+	// .main-slider__body
+	&__body {
+		// padding-top: toRem(140);
+		padding: toRem(140) toRem(0) toRem(0) toRem(0);
+		position: relative;
+		z-index: 2;
+		@media (max-width: $tablet) {
+			padding-top: toRem(80);
+		}
+		@media (max-width: $mobile) {
+			padding-top: toRem(50);
+		}
+		@media (min-width: $tablet) {
+			display: flex;
+		}
+	}
+	// .main-slider__content
+	&__content {
+		align-self: flex-start;
+		flex: 0 0 percent(494, 1240);
+		@include adaptiveValue("margin-bottom", 80, 15);
+		@media (max-width: $tablet) {
+			margin: toRem(0) toRem(-15);
+		}
+	}
+	// .main-slider__slider
+	&__slider {
+		flex: 1 1 auto;
+		min-width: 0;
+		align-self: flex-end;
+		@media (min-width: $tablet) {
+			padding-left: toRem(32);
+		}
+	}
+}
+.content-main {
+	position: relative;
+	z-index: 5;
+	@include adaptiveValue("padding-top", 60, 15);
+	@include adaptiveValue("padding-bottom", 60, 15);
+	padding-left: toRem(15);
+	padding-right: toRem(15);
+	background-color: rgba(255, 255, 255, 0.72);
+	@media (min-width: $tablet) {
+		@include adaptiveValue("padding", 60, 1);
+		background: rgba(255, 255, 255, 0.9);
+		/* Если браузер поддерживает backdrop-filter */
+		@supports ((-webkit-backdrop-filter: blur(31px)) or (backdrop-filter: blur(31px))) {
+			background: rgba(255, 255, 255, 0.72);
+			backdrop-filter: blur(31px);
+		}
+	}
+	// .content-main__title
+	&__title {
+		font-weight: 700;
+		@include adaptiveValue("font-size", 56, 24);
+		line-height: 120%;
+		&:not(:last-child) {
+			margin-bottom: em(16, 56);
+		}
+	}
+	// .content-main__text
+	&__text {
+		font-weight: 500;
+		@include adaptiveValue("font-size", 20, 16);
+		line-height: 150%;
+		color: var(--gray-color);
+		&:not(:last-child) {
+			margin-bottom: em(48, 20);
+		}
+	}
+	// .content-main__button
+	&__button {
+		@include adaptiveValue("min-height", 78, 45);
+		font-weight: 600;
+		@include adaptiveValue("font-size", 20, 16);
+		line-height: 150%;
+		background-color: var(--orange-color);
+		color: #fff;
+		width: 100%;
+		@media (any-hover: hover) {
+			&:hover {
+				background-color: var(--hover-button);
+			}
+		}
+	}
+}
+.slider-main {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	@media (max-width: $tablet) {
+		align-items: stretch;
+		flex-direction: column-reverse;
+	}
+	// .slider-main__controls
+	&__controls {
+		align-self: stretch;
+		margin-bottom: toRem(20);
+		@media (max-width: $tablet) {
+			margin: toRem(10) toRem(0) toRem(20) toRem(0);
+		}
+	}
+	// .slider-main__body
+	&__body {
+		&.swiper {
+			overflow: visible;
+		}
+		@media (min-width: $tablet) {
+			@include adaptiveValue("width", 934, 290);
+		}
+		@media (max-width: $tablet) {
+			margin: toRem(0) toRem(-15);
+		}
+	}
+	// .slider-main__wrapper
+	&__wrapper {
+	}
+	// .slider-main__slide
+	&__slide {
+		position: relative;
+	}
+	// .slider-main__image-ibg
+	&__image-ibg {
+		padding-bottom: 59.1%;
+	}
+	// .slider-main__content
+	&__content {
+		min-width: toRem(295);
+		max-height: toRem(300);
+		overflow: auto;
+		display: flex;
+		flex-direction: column;
+		@include adaptiveValue("padding", 24, 15);
+		background: rgba(255, 255, 255, 0.9);
+		@media (min-width: $mobile) {
+			position: absolute;
+			min-width: toRem(350);
+			@include adaptiveValue("bottom", 40, 0);
+			@include adaptiveValue("right", 40, 0);
+		}
+		/* Если браузер поддерживает backdrop-filter */
+		@supports ((-webkit-backdrop-filter: blur(31px)) or (backdrop-filter: blur(31px))) {
+			background: rgba(255, 255, 255, 0.72);
+			backdrop-filter: blur(31px);
+		}
+	}
+	// .slider-main__title
+	&__title {
+		font-weight: 600;
+		@include adaptiveValue("font-size", 28, 22);
+		line-height: 120%;
+		&:not(:last-child) {
+			margin-bottom: em(4, 28);
+		}
+	}
+	// .slider-main__text
+	&__text {
+		line-height: 150%;
+		color: var(--dark-gray-color);
+		&:not(:last-child) {
+			margin-bottom: em(8, 28);
+		}
+	}
+	// .slider-main__price
+	&__price {
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: center;
+		justify-content: space-between;
+		font-weight: 600;
+		line-height: 150%;
+		@include adaptiveValue("font-size", 20, 16);
+		&::before {
+			margin-left: toRem(10);
+			font-size: toRem(12);
+		}
+	}
+}
+.controls-main-slider {
+	display: flex;
+	align-items: center;
+	// .controls-main-slider__dotts
+	&__dotts {
+		flex: 1 1 auto;
+		@media (min-width: $tablet) {
+			padding: toRem(0) toRem(20) toRem(0) toRem(0);
+		}
+		@media (max-width: $tablet) {
+			justify-content: center;
+		}
+	}
+	// .controls-main-slider__arrows
+	&__arrows {
+		@media (max-width: $tablet) {
+			display: none;
+		}
+	}
+}
+//======================================================================================
+//======================================================================================
+// Advantages
+.advantages {
+	@include adaptiveValue("padding-top", 88, 30);
+	@include adaptiveValue("padding-bottom", 88, 30);
+	// .advantages__container
+	&__container {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+	// .advantages__item
+	&__item {
+		display: inline-grid;
+		padding: toRem(15) toRem(0);
+		grid-template: auto auto / toRem(85) 1fr;
+		@media (max-width: $tablet) {
+			min-width: toRem(280);
+		}
+		@media (max-width: $mobile) {
+			grid-template: auto auto / auto 1fr;
+		}
+	}
+	// .advantages__icon
+	&__icon {
+		text-align: center;
+		align-self: center;
+		grid-row: span 2;
+		@media (max-width: $mobile) {
+			padding-right: toRem(15);
+		}
+	}
+	// .advantages__title
+	&__title {
+		font-weight: 600;
+		font-size: toRem(18);
+		line-height: 150%;
+		margin-bottom: em(2, 18);
+	}
+	// .advantages__text
+	&__text {
+		line-height: 150%;
+		color: var(--gray-color);
+	}
+}
+//======================================================================================
+//======================================================================================
+// Products
+.products {
+	@include adaptiveValue("padding-bottom", 44, 30);
+	// .products__container
+	&__container {
+	}
+	// .products__title
+	&__title {
+		margin-bottom: em(32, 40);
+	}
+	// .products__items
+	&__items {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(toRem(285), 1fr));
+		gap: toRem(32);
+	}
+	// .products__item
+	&__item {
+	}
+	// .products__footer
+	&__footer {
+		padding-top: toRem(32);
+		text-align: center;
+	}
+	// .products__more
+	&__more {
+		border: toRem(1) solid var(--orange-color);
+		min-width: toRem(245);
+		&._hold {
+			opacity: 0.4;
+			cursor: default;
+		}
+	}
+}
+.item-product {
+	background-color: #f4f5f7;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	@media (any-hover: hover) {
+		&:hover {
+			.item-product__actions {
+				opacity: 1;
+				visibility: visible;
+			}
+		}
+	}
+	// .item-product__labels
+	&__labels {
+		position: absolute;
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		@include adaptiveValue("right", 24, 10);
+		@include adaptiveValue("top", 24, 10);
+		gap: toRem(10);
+	}
+	// .item-product__label
+	&__label {
+		flex: 0 0 toRem(48);
+		width: toRem(48);
+		height: toRem(48);
+		border-radius: 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: #fff;
+		font-weight: 500;
+		// line-height: 150%;
+		// .item-product__label--sale
+		&--sale {
+			background-color: #e97171;
+		}
+		&--new {
+			background-color: #2ec1ac;
+		}
+	}
+	// .item-product__image-ibg
+	&__image-ibg {
+		padding-bottom: percent(301, 285);
+	}
+	// .item-product__body
+	&__body {
+		flex: 1 1 auto;
+		padding: toRem(16) toRem(16) toRem(30) toRem(16);
+		display: flex;
+		flex-direction: column;
+	}
+	// .item-product__content
+	&__content {
+		flex: 1 1 auto;
+	}
+	// .item-product__title
+	&__title {
+		font-weight: 600;
+		@include adaptiveValue("font-size", 24, 20);
+		line-height: 120%;
+		margin-bottom: em(8, 24);
+	}
+	// .item-product__text
+	&__text {
+		font-weight: 500;
+		line-height: 150%;
+		color: var(--gray-color);
+		margin-bottom: em(8, 16);
+	}
+	// .item-product__prices
+	&__prices {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		line-height: 150%;
+		column-gap: toRem(16);
+		row-gap: toRem(5);
+	}
+	// .item-product__price
+	&__price {
+		font-weight: 600;
+		@include adaptiveValue("font-size", 20, 16);
+		// .item-product__price--old
+		&--old {
+			font-weight: normal;
+			@include adaptiveValue("font-size", 16, 14);
+			color: #b0b0b0;
+			text-decoration: line-through;
+		}
+	}
+	// .item-product__actions
+	&__actions {
+		@media (any-hover: none) {
+			padding-top: toRem(15);
+		}
+		@media (any-hover: hover) {
+			opacity: 0;
+			visibility: hidden;
+			position: absolute;
+			z-index: 3;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: rgba(58, 58, 58, 0.72);
+			transition: all 0.3s ease 0s;
+		}
+	}
+}
+.actions-product {
+	// .actions-product__body
+	&__body {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+	// .actions-product__button
+	&__button {
+		flex: 1 1 100%;
+		&:not(:last-child) {
+			margin-bottom: toRem(24);
+		}
+		&._hold {
+			opacity: 0.4;
+			cursor: default;
+		}
+	}
+	// .actions-product__link
+	&__link {
+		display: flex;
+		align-items: center;
+		font-weight: 600;
+		transition: color 0.3s ease 0s;
+		&::before {
+			margin-right: toRem(16);
+			font-size: toRem(16);
+		}
+		@media (any-hover: hover) {
+			color: #fff;
+			&:hover {
+				color: var(--orange-color);
+			}
+		}
+	}
+}
+//======================================================================================
+//======================================================================================
+// Rooms
+.rooms {
+	background-color: #fcf8f3;
+	@include adaptiveValue("padding-top", 44, 30);
+	@include adaptiveValue("padding-bottom", 44, 30);
+	// .rooms__container
+	&__container {
+		@media (min-width: $tablet) {
+			display: flex;
+		}
+	}
+	// .rooms__body
+	&__body {
+		flex: 0 0 percent(465, 1240);
+		position: relative;
+		z-index: 5;
+		align-self: center;
+		@media (min-width: $tablet) {
+			@include adaptiveValue("padding-right", 80, 30);
+		}
+		@media (max-width: $tablet) {
+			margin-bottom: toRem(30);
+		}
+	}
+	// .rooms__title
+	&__title {
+		text-align: left;
+		&:not(:last-child) {
+			margin-bottom: em(8, 40);
+		}
+	}
+	// .rooms__text
+	&__text {
+		font-weight: 500;
+		line-height: 150%;
+		&:not(:last-child) {
+			margin-bottom: toRem(24);
+		}
+	}
+	// .rooms__button
+	&__button {
+		background-color: var(--orange-color);
+		color: #fff;
+		min-width: toRem(180);
+		transition: all 0.3s ease 0s;
+		@media (any-hover: hover) {
+			&:hover {
+				background-color: var(--hover-button);
+			}
+		}
+	}
+	// .rooms__slider
+	&__slider {
+		flex: 1 1 auto;
+		min-width: 0;
+		align-self: flex-start;
+		@media (max-width: $mobileSmall) {
+			margin: 0 toRem(-15);
+		}
+	}
+}
+.slider-rooms {
+	position: relative;
+	// .slider-rooms__body
+	&__body {
+		&.swiper {
+			overflow: visible;
+		}
+		position: relative;
+		&::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			height: 100%;
+			width: 100vw;
+			left: 0;
+			background-color: #fcf8f3;
+			z-index: 2;
+			transform: translate(-100%, 0);
+		}
+	}
+	// .slider-rooms__wrapper
+	&__wrapper {
+	}
+	// .slider-rooms__slide
+	&__slide {
+		width: toRem(372);
+		position: relative;
+		overflow: hidden;
+		@include adaptiveValue("min-height", 585, 400);
+		&.swiper-slide-active {
+			.slider-rooms__image-ibg {
+				height: 100%;
+			}
+		}
+		@media (max-width: $mobileSmall) {
+			width: 100%;
+		}
+	}
+	// .slider-rooms__image-ibg
+	&__image-ibg {
+		height: 100%;
+		transition: height 0.8s ease 0s;
+		@media (min-width: $mobile) {
+			height: 83%;
+		}
+	}
+	// .slider-rooms__content
+	&__content {
+		position: absolute;
+		max-width: toRem(240);
+		@include adaptiveValue("left", 24, 15);
+		@include adaptiveValue("bottom", 24, 15);
+		@include adaptiveValue("padding", 32, 15);
+		background: rgba(255, 255, 255, 0.9);
+		/* Если браузер поддерживает backdrop-filter */
+		@supports ((-webkit-backdrop-filter: blur(31px)) or (backdrop-filter: blur(31px))) {
+			background: rgba(255, 255, 255, 0.72);
+			backdrop-filter: blur(31px);
+		}
+		&::before {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			transform: translate(100%, 0);
+			width: toRem(48);
+			height: toRem(48);
+			background-color: var(--orange-color);
+			color: #fff;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+	// .slider-rooms__label
+	&__label {
+	}
+	// .slider-rooms__title
+	&__title {
+		font-weight: 600;
+		@include adaptiveValue("font-size", 28, 24);
+		line-height: 120%;
+		text-transform: capitalize;
+	}
+	// .slider-rooms__arrows
+	&__arrows {
+		pointer-events: none;
+		position: absolute;
+		top: 50%;
+		transform: translate(0, -50%);
+		width: calc(100% - toRem(48));
+		left: toRem(24);
+		z-index: 5;
+		justify-content: space-between;
+		@media (min-width: $pc) {
+			width: calc(100% + toRem(48));
+			left: toRem(-24);
+		}
+		@media (max-width: $mobileSmall) {
+			display: none;
+		}
+	}
+	// .slider-rooms__dotts
+	&__dotts {
+		@media (min-width: $mobile) {
+			position: absolute;
+			bottom: toRem(30);
+			width: 100%;
+			left: toRem(396);
+		}
+		@media (max-width: $mobile) {
+			justify-content: center;
+			padding-top: toRem(15);
+		}
+	}
+}
+.label-slider {
+	font-weight: 500;
+	color: var(--dark-gray-color);
+	line-height: 150%;
+	display: grid;
+	grid-template-columns: auto toRem(27) auto;
+	gap: toRem(8);
+	align-items: center;
+	justify-content: start;
+	&:not(:last-child) {
+		margin-bottom: toRem(8);
+	}
+	// .label-slider__number
+	&__number {
+	}
+	// .label-slider__line
+	&__line {
+		height: toRem(1);
+		background-color: var(--dark-gray-color);
+	}
+	// .label-slider__text
+	&__text {
+		text-transform: capitalize;
+	}
+}
+//======================================================================================
+//======================================================================================
+// Tips and Tricks
+.tips {
+	@include adaptiveValue("padding-top", 44, 30);
+	@include adaptiveValue("padding-bottom", 44, 30);
+	// .tips__container
+	&__container {
+	}
+	// .tips__title
+	&__title {
+	}
+	// .tips__slider
+	&__slider {
+	}
+}
+.slider-tips {
+	position: relative;
+	// .slider-tips__body
+	&__body {
+		@include adaptiveValue("margin-left", -32, -15);
+		@include adaptiveValue("margin-right", -32, -15);
+		@include adaptiveValue("padding", 32, 15);
+	}
+	// .slider-tips__wrapper
+	&__wrapper {
+	}
+	// .slider-tips__slide
+	&__slide {
+		display: flex;
+		flex-direction: column;
+		transition: box-shadow 0.3s ease 0s;
+		@media (any-hover: hover) {
+			&:hover {
+				box-shadow: 0 0 toRem(32) rgba(97, 97, 97, 0.2);
+			}
+		}
+	}
+	// .slider-tips__image-ibg
+	&__image-ibg {
+		padding-bottom: percent(251, 391);
+	}
+	// .slider-tips__content
+	&__content {
+		display: flex;
+		flex-direction: column;
+		padding: toRem(15);
+		flex: 1 1 auto;
+		align-items: flex-start;
+	}
+	// .slider-tips__title
+	&__title {
+		flex: 1 1 auto;
+		font-weight: 600;
+		@include adaptiveValue("font-size", 24, 18);
+		line-height: 120%;
+		transition: color 0.3s ease 0s;
+		&:not(:last-child) {
+			margin-bottom: em(8, 24);
+		}
+		@media (any-hover: hover) {
+			&:hover {
+				color: var(--orange-color);
+			}
+		}
+	}
+	// .slider-tips__text
+	&__text {
+		font-size: toRem(14);
+		line-height: 150%;
+		color: var(--gray-color);
+	}
+	// .slider-tips__dotts
+	&__dotts {
+		@include adaptiveValue("padding-top", 8, 0);
+		justify-content: center;
+	}
+	// .slider-tips__arrows
+	&__arrows {
+		pointer-events: none;
+		position: absolute;
+		top: 50%;
+		transform: translate(0, -50%);
+		width: calc(100% - toRem(48));
+		left: toRem(24);
+		z-index: 5;
+		justify-content: space-between;
+		@media (min-width: $pc) {
+			width: calc(100% + toRem(48));
+			left: toRem(-24);
+		}
+		@media (max-width: $mobile) {
+			display: none;
+		}
+	}
+}
+//======================================================================================
+//======================================================================================
+// Furniture
+.furniture {
+	@include adaptiveValue("padding-bottom", 85, 40);
+	// .furniture__cont
+	&__cont {
+	}
+	// .furniture__label
+	&__label {
+		font-weight: 600;
+		@include adaptiveValue("font-size", 20, 16);
+		line-height: 150%;
+		color: var(--dark-gray-color);
+		text-align: center;
+		&:not(:last-child) {
+			margin-bottom: em(8, 20);
+		}
+	}
+	// .furniture__title
+	&__title {
+		&:not(:last-child) {
+			margin-bottom: em(32, 40);
+		}
+	}
+	// .furniture__body
+	&__body {
+		position: relative;
+		@media (any-hover: none) {
+			overflow: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+	}
+	// .furniture__items
+	&__items {
+		display: grid;
+		grid-template-columns: auto;
+		grid-auto-flow: column;
+		align-items: center;
+		gap: toRem(16);
+		@media (any-hover: hover) {
+			justify-content: center;
+		}
+	}
+	// .furniture__column
+	&__column {
+		display: flex;
+		flex-wrap: wrap;
+		margin: 0 toRem(-8);
+		&:first-child {
+			justify-content: flex-end;
+		}
+	}
+	// .furniture__row
+	&__row {
+		display: inline-grid;
+		padding: toRem(0) toRem(8);
+		grid-template-columns: auto;
+		grid-auto-flow: column;
+		gap: toRem(16);
+		&:not(:last-child) {
+			margin-bottom: toRem(16);
+		}
+	}
+}
+.row-furniture {
+	// .row-furniture--left-top
+	&--left-top {
+		justify-content: end;
+		align-items: end;
+	}
+	// .row-furniture--left-bottom
+	&--left-bottom {
+		justify-content: end;
+		align-items: start;
+	}
+	// .row-furniture--center
+	&--center {
+		display: block;
+	}
+	// .row-furniture--right-top
+	&--right-top {
+		align-items: end;
+	}
+	// .row-furniture--right-bottom
+	&--right-bottom {
+		align-items: start;
+	}
+	// .row-furniture__item
+	&__item {
+		@media (any-hover: hover) {
+			img {
+				transition: all 0.3s ease 0s;
+				filter: grayscale(1);
+			}
+			&:hover {
+				img {
+					filter: grayscale(0);
+				}
+			}
+		}
+	}
+}
